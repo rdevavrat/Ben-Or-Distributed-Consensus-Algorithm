@@ -1,0 +1,87 @@
+                                          ////////////////// Observations //////////////////
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+1. AGREEMENT
+    
+    a. Definition - Agreement property is our invariant. In this, we are checking that, for any two processes 'j' and 'k',
+                    the decided value should not be '-1' but also it should be equal. 
+                  
+    b. Tests - We tried different inputs, like <<1,0,1,1>> and <<1,0,1,0>> where some of the inputs 
+               had clear majority while some of them did not have a majority initially. 
+               We also tried to assign different values of F and Maxrounds.
+    
+    c. Observations - With the inputs where there was a clear majority initially like <<0,1,1,1>> or <<0,1,0,0>>,
+                      consensus was reached in the first round itself and the decided value was set as the anchored value for all the nodes.
+
+                      Inputs where there was not a clear majority initially like <<0,1,0,1>>, values were not anchored 
+                      until a majority value was introduced in the input across multiple iterations.
+                      
+                      For example, with <<0,1,0,1>>, each node will propose '-1' as the value in its first iteration due to a lack of
+                      a majority quorum. When due to randomization a majority is established, then that majority value will be anchored.
+                      
+                      Thus, for all the cases the agreement will hold.
+                      
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+2. PROGRESS
+    
+    a. Definition - Progress property checks that eventually all the process will decide a value
+                    between '0' or '1' and when that happens, consensus is reached and program terminates. 
+                  
+    b. Tests - We tried different inputs, like <<1,0,1,1>> and <<1,0,1,0>> where some of the inputs 
+               had clear majority while some of them did not have a majority initially. 
+               We also tried to assign different values of F and Maxrounds.
+    
+    c. Observations - With inputs like <<1,0,1,1>> where a clear majority quorum exists, the majority value is anchored by every node
+                      in the first iteration itself. This anchored value is always between '0' or '1'.
+                      
+                      With inputs like <<0,1,0,1>> where there isn't a clear majority quorum, -1 will be proposed until 
+                      a majority quorum is not established. When the majority is established, all the process will anchor the
+                      majority value which will be either '0' or '1'.
+                      
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+3. BAIT PROGRESS
+    
+    a. Definition - Bait progress claims that it is not possible for all processes to decide a value.
+                    This basically claims that, there will be atleast one node, which will not decide a 
+                    value of '0' or '1' but will remain '-1'.
+                  
+    b. Tests - We tried different inputs, like <<1,0,1,1>> and <<1,0,1,0>> where some of the inputs 
+               had clear majority while some of them did not have a majority initially. 
+               We also tried to assign different values of F and Maxrounds.
+    
+    c. Observations - With all the different kinds of inputs and parameters, it was obsereved that eventually all the processes
+                      decide and anchor the majority value. It satisfies the Progress property.
+                      
+                      As soon as all the processes decide a value, the model checker throws the error that BaitProgress is violated.
+                      It shows the error trace and establishes that all the nodes eventually reach a consensus.
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+4. MINORITY REPORT
+    
+    a. Definition - Minority Report claims that it is not possible that a value from 
+                    the minority quorum will be decided and anchored.
+                  
+    b. Tests - We tried this test with the following input - 
+                   
+                   F= 0
+                   N = 4
+                   INPUT = <<0,1,1,1>>
+                   MAXROUNDS = 2
+                   
+                   F= 1
+                   N = 4
+                   INPUT = <<0,1,1,1>>
+                   MAXROUNDS = 2
+                   
+                   F= 2
+                   N = 4
+                   INPUT = <<0,1,1,1>>
+                   MAXROUNDS = 2
+                   
+               We tried to check that the value decided and anchored by all the processes is not '0'; 
+    
+    c. Observations - In all of the above inputs, value '0' is in the minority quorum. 
+                      When we ran the model with F=0, MinorityReport was not violated.
+                      But when we ran the model for F=1, F=2, F=3, Minority Report was violated.
+                      
+-----------------------------------------------------------------------------------------------------------------------------------------------------  
